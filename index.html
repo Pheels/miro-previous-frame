@@ -25,13 +25,24 @@
     })
 
     async function previousFrame(){
-      let widgets = await miro.board.widgets.get({type: "FRAME"});
-      let i = 0;
-      while (i < widgets.length) {
-        console.log(widgets[i]);
-        i++;
+      let frames = await miro.board.widgets.get({type: "FRAME"});
+      let currentFrame = await miro.board.selection.get();
+      if (currentFrame.length == 0  || !currentFrame){
+        currentFrame = 0;
+        console.log("current widget 0")
+        miro.board.viewport.zoomToObject(frames[0]['id'])
+        miro.board.selection.selectWidgets(frames[0])
+      } else {
+        for (var i = 1; i < frames.length; i ++){
+          if (i == 0){
+            return;
+          } else if (frames[i]['id'] == currentFrame[0]['id']) {
+            miro.board.viewport.zoomToObject(frames[i-1]['id'])
+            miro.board.selection.selectWidgets(frames[i-1])
+            return;
+          }
+        }
       }
-      miro.board.viewport.zoomToObject(widgets[0]['id'])
     }
 
     </script>
